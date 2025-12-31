@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Décompte 2026 - TANTAMIN Sabi Sammo</title>
+
+<style>
+    body {
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle, #001f3f, #000000);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        color: white;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .container {
+        width: 100%;
+        z-index: 2;
+    }
+
+    h1 {
+        font-size: 6vw;
+        color: gold;
+        margin-bottom: 30px;
+        text-shadow: 0 0 20px gold;
+    }
+
+    #countdown {
+        font-size: 7vw;
+        font-weight: bold;
+        background: rgba(0,0,0,0.6);
+        padding: 30px;
+        border-radius: 25px;
+        display: inline-block;
+        min-width: 85%;
+        box-shadow: 0 0 30px #00ffff;
+    }
+
+    .name {
+        margin-top: 30px;
+        font-size: 4vw;
+        color: #ffd700;
+    }
+
+    .contact {
+        margin-top: 15px;
+        font-size: 3vw;
+    }
+
+    canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+</style>
+</head>
+
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="container">
+    <h1>🎉 DÉCOMPTE VERS 2026 🎉</h1>
+
+    <div id="countdown">Chargement...</div>
+
+    <div class="name">
+        Créé par : TANTAMIN Sabi Sammo
+    </div>
+
+    <div class="contact">
+        📱 WhatsApp : +229 53 78 93 63 <br>
+        📧 Gmail : tsabisammo@gmail.com
+    </div>
+</div>
+
+<script>
+/* ================= DÉCOMPTE ================= */
+const targetDate = new Date("2026-01-01T00:00:00").getTime();
+let launched = false;
+
+function speak(text) {
+    const voice = new SpeechSynthesisUtterance(text);
+    voice.lang = "fr-FR";
+    voice.rate = 0.9;
+    voice.pitch = 1;
+    speechSynthesis.speak(voice);
+}
+
+function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+
+    if (distance <= 0) {
+        document.getElementById("countdown").innerHTML =
+            "🎆 HEUREUSE ANNÉE 2026 🎆";
+
+        if (!launched) {
+            speak("Heureuse année deux mille vingt-six. Bonne année à tous !");
+            startFireworks();
+            launched = true;
+        }
+        return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((distance / (1000 * 60)) % 60);
+    const seconds = Math.floor((distance / 1000) % 60);
+
+    document.getElementById("countdown").innerHTML =
+        `${days} JOURS | ${hours} H | ${minutes} MIN | ${seconds} S`;
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+/* ================= FEUX D’ARTIFICE ================= */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+function createFirework() {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height / 2;
+    for (let i = 0; i < 80; i++) {
+        particles.push({
+            x,
+            y,
+            radius: 2,
+            color: `hsl(${Math.random() * 360},100%,50%)`,
+            speedX: (Math.random() - 0.5) * 8,
+            speedY: (Math.random() - 0.5) * 8,
+            life: 100
+        });
+    }
+}
+
+function startFireworks() {
+    setInterval(createFirework, 600);
+    animateFireworks();
+}
+
+function animateFireworks() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((p, index) => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.life--;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+
+        if (p.life <= 0) particles.splice(index, 1);
+    });
+    requestAnimationFrame(animateFireworks);
+}
+</script>
+
+</body>
+</html>
